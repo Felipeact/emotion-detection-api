@@ -11,9 +11,12 @@ def sent_detection():
     """Analyze the emotion of the submitted text."""
     text_to_analyze = request.args.get("textToAnalyze")
 
-    response = emotion_detector(text_to_analyze)
+    try:
+        response = emotion_detector(text_to_analyze)
+    except Exception:
+        return "Emotion detection service is unavailable. Please try again later.", 503
 
-    if response is None:
+    if response["dominant_emotion"] is None:
         return "Invalid text! Please try again."
 
     anger = response["anger"]
@@ -24,9 +27,9 @@ def sent_detection():
     dominant_emotion = response["dominant_emotion"]
 
     return (
-        f"For the given statement, the system response is "
-        f"'anger': {anger}, 'disgust': {disgust}, 'fear': {fear}, "
-        f"'joy': {joy} and 'sadness': {sadness}. "
+        f"For the given statement, the system response is: \n"
+        f"'anger': {anger}, \n 'disgust': {disgust}, \n 'fear': {fear}, \n"
+        f"'joy': {joy} \n and 'sadness': {sadness}. \n"
         f"The dominant emotion is {dominant_emotion}"
     )
 
